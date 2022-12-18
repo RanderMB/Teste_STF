@@ -10,7 +10,7 @@ CRUD para as tabelas "Pedido", "ItensPedido", "Produto".
 Abra o arquivo "CrudProduto.csproj.user".
 
 - No terminal, insira o comando a seguir para rodar a migration "dotnet ef update database". 
-Em seguida rode a aplicação e adcione à URL o seguinte: "\swagger".
+Em seguida rode a aplicação e adcione à URL o seguinte: "/swagger".
 
 Para se fazer requisições de Pedido, deve-se primeiramente Adcionar (requisitar um POST) ao menos 1 Produto.
 O JSON de response de Pedido contém o array de ItensPedido, onde há a coluna de FK da tabela Produto.
