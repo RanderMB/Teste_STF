@@ -15,7 +15,7 @@ Em seguida rode a aplicação e adcione à URL o seguinte: "/swagger".
 Para se fazer requisições de Pedido, deve-se primeiramente Adcionar (requisitar um POST) ao menos 1 Produto.
 O JSON de response de Pedido contém o array de ItensPedido, onde há a um FK da tabela Produto.
 
-Após adcionar minimo de 1 produto, é so fazer as requisições que se deseja.
+Após adcionar minimo de 1 produto, faça um post de pedido utilizando o ID do produto adcionado que se deseja listar em pedido.
 
 ## Observação para avaliação
 O código utiliza o SQLite por questão de pertinencia dos dados.
