@@ -46,7 +46,7 @@ namespace CrudProduto.Services
             return viewModels;
         }
 
-        public GetPedidoViewModel ConstruirResponse(Pedido pedido)
+        private GetPedidoViewModel ConstruirResponse(Pedido pedido)
         {
             var valorTotal = 0.0;
             foreach (var item in pedido.ItensPedido)
