@@ -13,8 +13,11 @@ Abra o arquivo "CrudProduto.sln".
 Em seguida rode a aplicação e adcione à URL o seguinte: "/swagger".
 
 Para se fazer requisições de Pedido, deve-se primeiramente Adcionar (requisitar um POST) ao menos 1 Produto.
-O JSON de response de Pedido contém o array de ItensPedido, onde há a coluna de FK da tabela Produto.
+O JSON de response de Pedido contém o array de ItensPedido, onde há a um FK da tabela Produto.
 
 Após adcionar minimo de 1 produto, é so fazer as requisições que se deseja.
+
+## Observação para avaliação
+O código utiliza o SQLite por questão de pertinencia dos dados.
 
 
