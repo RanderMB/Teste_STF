@@ -1,4 +1,4 @@
-# Descrição Pojeto
+# Descrição Do Projeto
 CRUD para as tabelas "Pedido", "ItensPedido", "Produto".
 
 ## Requerimentos Para Utilizar
