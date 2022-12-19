@@ -1,5 +1,6 @@
 ﻿using CrudProduto.Data;
 using CrudProduto.Models;
+using CrudProduto.Services;
 using CrudProduto.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +17,13 @@ namespace CrudProduto.Controllers
         public IActionResult Get(
             [FromServices] AppDbContext context)
         {
-            var pedidos = context.Pedidos.ToList();
-            return Ok(pedidos);
+            var listarPedidosService = new ListarPedidosService(context);
+            var response = listarPedidosService.GetAll();
+
+            if (response == null)
+                return NotFound();
+
+            return Ok(response);
         }
 
         [HttpGet("pedidos/{id:int}")]
@@ -25,46 +31,18 @@ namespace CrudProduto.Controllers
            [FromRoute] int id,
            [FromServices] AppDbContext context)
         {
-            var pedido = context.Pedidos
-                .Include(x => x.ItensPedido)
-                .ThenInclude(y => y.Produto)
-                .Where(x => x.Id == id).FirstOrDefault();
+            var listarPedidosService = new ListarPedidosService(context);
+            var response = listarPedidosService.GetById(id);
 
-
-            if (pedido == null)
+            if (response == null)
                 return NotFound();
-
-            var valorTotal = 0.0;
-            foreach (var item in pedido.ItensPedido)
-            {
-               var valorTotalItem = item.Quantidade * item.Produto.Valor;
-               valorTotal += valorTotalItem;
-            }
-
-            var response = new GetPedidoViewModel
-            {
-                Id = pedido.Id,
-                NomeCliente = pedido.NomeCliente,
-                EmailCliente = pedido.EmailCliente,
-                Pago = pedido.Pago,
-                ValorTotal = valorTotal,
-                ItensPedido = pedido.ItensPedido.Select(x => new GetItensPedidoViewModel
-                {
-                    Id = x.Id,
-                    IdProduto = x.IdProduto,
-                    NomeProduto = x.Produto.NomeProduto,
-                    ValorUnitario = x.Produto.Valor,
-                    Quantidade = x.Quantidade
-
-                }).ToList()
-            };
 
             return Ok(response);
         }
 
         [HttpPost("pedidos")]
         public IActionResult Post(
-           [FromBody] CreatePedidoViewModel model,
+           [FromBody] EditorPedidoViewModel model,
            [FromServices] AppDbContext context)
         {
                 var pedidos = new Pedido
@@ -78,21 +56,19 @@ namespace CrudProduto.Controllers
                         IdProduto = x.IdProduto,
                         Quantidade = x.Quantidade
                     }).ToList()
-                };
+                }; 
 
                 context.Pedidos.Add(pedidos);
                 context.SaveChanges();
 
-                model.Id = pedidos.Id;
-
-                return Created($"pedidos/{pedidos.Id}", model);
+                return Created($"pedidos/{pedidos.Id}", pedidos);
             
         }
 
         [HttpPut("pedidos/{id:int}")]
         public IActionResult Put(
            [FromRoute] int id,
-           [FromBody] PutPedidoViewModel model,
+           [FromBody] EditorPedidoViewModel model,
            [FromServices] AppDbContext context)
         {
 
@@ -101,26 +77,26 @@ namespace CrudProduto.Controllers
                .ThenInclude(y => y.Produto)
                .Where(x => x.Id == id).FirstOrDefault();
 
-            if(pedido == null)
+            if (pedido == null)
                 return NotFound();
 
-            var pedidos = new Pedido
-            {
-                NomeCliente = model.NomeCliente,
-                EmailCliente = model.EmailCliente,
-                Pago = model.Pago,
-                DataCriacao = DateTime.Now,
-                ItensPedido = model.ItensPedido.Select(x => new ItensPedido()
-                {
-                    IdProduto = x.IdProduto,
-                    Quantidade = x.Quantidade
-                }).ToList()
-            };
+            pedido.NomeCliente = model.NomeCliente;
+            pedido.EmailCliente = model.EmailCliente;
+            pedido.Pago = model.Pago;
 
-            context.Pedidos.Update(pedidos);
+            context.ItensPedidos.RemoveRange(pedido.ItensPedido);
+
+            pedido.ItensPedido = model.ItensPedido.Select(x => new ItensPedido()
+            {
+                IdProduto = x.IdProduto,
+                Quantidade = x.Quantidade
+            }).ToList();
+
+
+            context.Pedidos.Update(pedido);
             context.SaveChanges();
 
-            return Created($"pedidos/id/{pedidos.Id}", model);
+            return Ok(pedido);
         }
 
         [HttpDelete("pedidos/{id:int}")]

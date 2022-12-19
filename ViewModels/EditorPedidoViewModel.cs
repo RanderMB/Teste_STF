@@ -2,9 +2,8 @@
 
 namespace CrudProduto.ViewModels
 {
-    public class CreatePedidoViewModel
-    {
-        public int Id { get; set; }
+    public class EditorPedidoViewModel
+    {       
         public string NomeCliente { get; set; }
         public string EmailCliente { get; set; }
         public bool Pago { get; set; }

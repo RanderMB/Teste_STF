@@ -1,5 +1,6 @@
 ﻿using CrudProduto.Data;
 using CrudProduto.Models;
+using CrudProduto.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,33 +33,42 @@ namespace CrudProduto.Controllers
 
         [HttpPost("produtos")]
         public IActionResult Post(
-           [FromBody] Produto model,
+           [FromBody] EditorProdutoViewModel model,
            [FromServices] AppDbContext context)
         {
-            context.Produtos.Add(model);
+            var produtos = new Produto
+            {
+                NomeProduto = model.NomeProduto,
+                Valor = model.Valor
+            };
+
+            context.Produtos.Add(produtos);
             context.SaveChanges();
 
-            return Created($"produtos/{model.Id}", model);
+            return Created($"produtos/{produtos.Id}", produtos);
         }
 
         [HttpPut("produtos/{id:int}")]
         public IActionResult Put(
            [FromRoute] int id,
-           [FromBody] Produto model,
+           [FromBody] EditorProdutoViewModel model,
            [FromServices] AppDbContext context)
         {
-            var produtos = context.Produtos.FirstOrDefault(x => x.Id == id);
+            var produto = context.Produtos.FirstOrDefault(x => x.Id == id);
 
-            if (produtos == null)
+            if (produto == null)
                 return NotFound();
 
-            produtos.NomeProduto = model.NomeProduto;
-            produtos.Valor = model.Valor;
 
-            context.Produtos.Update(produtos);
+
+            produto.NomeProduto = model.NomeProduto;
+            produto.Valor = model.Valor;
+            
+
+            context.Produtos.Update(produto);
             context.SaveChanges();
 
-            return Created($"produtos/{model.Id}", model);
+            return Ok(model);
         }
 
         [HttpDelete("produtos/{id:int}")]
